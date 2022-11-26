@@ -1,9 +1,11 @@
 from http import HTTPStatus
 
 from fastapi import Depends, APIRouter
+from sqlalchemy.orm import Session
 
 from app import dto
-from app.services.user_service import UserService, get_user_service
+from app.database import get_db
+from app.services import user_service
 
 router = APIRouter(
     prefix="/users",
@@ -12,15 +14,15 @@ router = APIRouter(
 
 
 @router.post("/", status_code=HTTPStatus.CREATED, response_model=dto.UserResponseDto)
-def create_user(user: dto.UserDto, user_service: UserService = Depends(get_user_service)):
-    return user_service.create_user(user)
+def create_user(user: dto.UserDto, db: Session = Depends(get_db)):
+    return user_service.create_user(db=db, user_dto=user)
 
 
 @router.get("/{id_}", response_model=dto.UserResponseDto)
-def get_user(id_: int, user_service: UserService = Depends(get_user_service)):
-    return user_service.get_user_by_id(id_)
+def get_user(id_: int, db: Session = Depends(get_db)):
+    return user_service.get_user(db=db, user_id=id_)
 
 
 @router.delete("/{id_}", status_code=HTTPStatus.NO_CONTENT)
-def delete_user(id_: int, user_service: UserService = Depends(get_user_service)):
-    return user_service.delete_user(id_)
+def delete_user(id_: int, db: Session = Depends(get_db)):
+    return user_service.delete_user(db=db, user_id=id_)

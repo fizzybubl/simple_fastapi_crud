@@ -2,11 +2,13 @@ from http import HTTPStatus
 from typing import Optional
 
 from fastapi import Depends, APIRouter
+from sqlalchemy.orm import Session
 
 from app import dto
+from app.database import get_db
 from app.models import UserEntity
 from app.oauth2 import get_current_user
-from app.services.post_service import get_post_service, PostService
+from app.services import post_service
 
 router = APIRouter(
     prefix="/posts",
@@ -15,37 +17,37 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[dto.PostResponseDto])
-def get_posts(post_service: PostService = Depends(get_post_service),
+def get_posts(db: Session = Depends(get_db),
               current_user: UserEntity = Depends(get_current_user),
               limit: int = 5,
               skip: int = 0,
               search: Optional[str] = ""):
-    return post_service.get_posts(limit, skip)
+    return post_service.get_posts(db=db, limit=limit, offset=skip)
 
 
 @router.get("/{id_}", response_model=dto.PostResponseDto)
-def get_post(id_: int, post_service: PostService = Depends(get_post_service),
+def get_post(id_: int, db: Session = Depends(get_db),
              current_user: UserEntity = Depends(get_current_user)):
-    return post_service.get_post(id_=id_)
+    return post_service.get_post(db=db, post_id=id_)
 
 
 @router.post("/", status_code=HTTPStatus.CREATED, response_model=dto.PostResponseDto)
 def create_posts(post: dto.PostDto,
-                 post_service: PostService = Depends(get_post_service),
+                 db: Session = Depends(get_db),
                  current_user: UserEntity = Depends(get_current_user)):
-    return post_service.create_post(post, owner_id=current_user.id)
+    return post_service.create_post(db=db, post_dto=post, owner_id=current_user.id)
 
 
 @router.delete("/{id_}", status_code=HTTPStatus.NO_CONTENT)
 def delete_post(id_: int,
-                post_service: PostService = Depends(get_post_service),
+                db: Session = Depends(get_db),
                 current_user=Depends(get_current_user)):
-    return post_service.delete_post(id_, current_user.id)
+    return post_service.delete_post(db=db, post_id=id_, user_id=current_user.id)
 
 
 @router.put("/{id_}", status_code=HTTPStatus.OK)
 def update_post(id_: int,
                 post: dto.PostDto,
-                post_service: PostService = Depends(get_post_service),
+                db: Session = Depends(get_db),
                 current_user=Depends(get_current_user)):
-    return post_service.update_post(id_=id_, post_dto=post, owner_id=current_user.id)
+    return post_service.update_post(db=db, post_id=id_, user_id=current_user.id, post_dto=post)
