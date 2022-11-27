@@ -31,15 +31,25 @@ class TokenData(BaseModel):
     id: Optional[int] = None
 
 
-class PostDto(BaseModel):
+class Post(BaseModel):
     title: str
     content: str
     published: bool
 
 
-class PostResponseDto(PostDto, ResponseDto):
+class PostResponse(Post, ResponseDto):
     owner_id: int
     owner: UserResponseDto
+
+
+class PostSchema(BaseModel):
+    post: Post
+    votes: int
+
+
+class PostResponseSchema(BaseModel):
+    PostEntity: PostResponse
+    votes: int
 
 
 class Vote(BaseModel):

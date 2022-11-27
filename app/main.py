@@ -5,7 +5,7 @@ from app import models
 from app.database import engine
 from app.routers import post, user, auth, vote
 
-models.BaseEntity.metadata.create_all(bind=engine)
+# models.BaseEntity.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(post.router)

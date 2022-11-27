@@ -22,6 +22,7 @@ class UserEntity(BaseEntity):
     id = Column(Integer, primary_key=True, nullable=False)
     email = Column(String(128), nullable=False, unique=True)
     password = Column(String(128), nullable=False)
+    phone_number = Column(String(64))
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('NOW()'))
 
 
