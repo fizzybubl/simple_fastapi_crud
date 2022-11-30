@@ -4,11 +4,10 @@ from http import HTTPStatus
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
-from sqlalchemy.orm import Session
 
 from app import dto
 from app.config import settings
-from app.database import get_db
+from app.database import session_factory
 from app.models import UserEntity
 
 
@@ -34,10 +33,11 @@ def verify_access_token(token: str, exc: Exception):
         raise exc
 
 
-def get_current_user(token: str = Depends(oauth_schema), db: Session = Depends(get_db)):
+def get_current_user(token: str = Depends(oauth_schema)):
     credentials_exception = HTTPException(status_code=HTTPStatus.UNAUTHORIZED,
                                           detail="Could not validate credentials",
                                           headers={"WWW-Authenticate": "Bearer"})
     token = verify_access_token(token=token, exc=credentials_exception)
-    return db.query(UserEntity).filter(UserEntity.id == token.id).first()
+    with session_factory() as session:
+        return session.query(UserEntity).filter(UserEntity.id == token.id).first()
 

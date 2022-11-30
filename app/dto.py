@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, conint
+from pydantic import BaseModel, EmailStr
 
 
 class ResponseDto(BaseModel):
@@ -39,7 +39,6 @@ class Post(BaseModel):
 
 class PostResponse(Post, ResponseDto):
     owner_id: int
-    owner: UserResponseDto
 
 
 class PostSchema(BaseModel):
