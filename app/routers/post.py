@@ -2,6 +2,7 @@ from http import HTTPStatus
 from typing import Optional
 
 from fastapi import Depends, APIRouter
+from sqlalchemy.orm import Session
 
 from app import dto
 from app.database import session_factory
@@ -15,7 +16,25 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[dto.PostResponseSchema])
+def use_session(_func=None):
+    print(_func)
+    def outer(func):
+        print(func)
+
+        def inner(*args, **kwargs):
+            with session_factory() as session:
+                print("generated session")
+                args = [*args, session]
+                r = func(*args, **kwargs)
+                return r
+
+        print(func)
+        return inner
+
+    return outer(_func) if _func else outer
+
+
+@router.get("/")
 def get_posts(current_user: UserEntity = Depends(get_current_user),
               limit: int = 5,
               skip: int = 0,
