@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from tests.conftest import get_post_payload
+from tests.utils import get_post_payload
 
 
 def test_add_vote(client, create_post, access_token):

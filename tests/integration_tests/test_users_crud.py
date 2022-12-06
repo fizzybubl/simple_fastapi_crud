@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from tests.conftest import get_token, random_input
+from tests.utils import get_token, random_input
 
 
 @pytest.fixture(scope="session")

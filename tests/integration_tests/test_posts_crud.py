@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from tests.conftest import get_post_payload
+from tests.utils import get_post_payload
 
 
 def test_get_posts(client, access_token):

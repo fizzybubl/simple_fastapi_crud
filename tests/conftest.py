@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from random import random
 
 import pytest
 from sqlalchemy import create_engine
@@ -26,9 +25,13 @@ def get_testing_db():
         db.close()
 
 
-@pytest.fixture()
-def db_client():
-    return get_testing_db()
+@pytest.fixture(scope="module")
+def session():
+    db = testing_session_factory()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @pytest.fixture(scope="session")
@@ -43,25 +46,6 @@ def access_token(client):
                            data={"username": "daniil@gmail.com", "password": "12345"})
     assert response.status_code == HTTPStatus.OK
     return response.json()["access_token"]
-
-
-def get_token(client, username, password):
-    response = client.post("/authenticate",
-                           data={"username": username, "password": password})
-    assert response.status_code == HTTPStatus.OK
-    return response.json()["access_token"]
-
-
-def random_input():
-    return random() * 10_000_000
-
-
-def get_post_payload():
-    return {
-        "title": f"Book Title {random_input()}",
-        "content": "Book Content",
-        "published": False
-    }
 
 
 @pytest.fixture(scope="session")
