@@ -14,15 +14,15 @@ router = APIRouter(
 )
 
 
-@router.post("/", status_code=HTTPStatus.CREATED)
-def create_vote(vote_dto: dto.Vote, current_user=Depends(get_current_user),
+@router.put("/{post_id}", status_code=HTTPStatus.OK)
+def create_vote(post_id: int, current_user=Depends(get_current_user),
                 db: Session = Depends(get_db)):
-    vote_service.create_vote(db=db, post_id=vote_dto.post_id, user_id=current_user.id)
+    vote_service.create_vote(db=db, post_id=post_id, user_id=current_user.id)
     return {"message": "successfully voted!"}
 
 
-@router.delete("/", status_code=HTTPStatus.OK)
-def delete_vote(vote_dto: dto.Vote, current_user=Depends(get_current_user),
+@router.delete("/{post_id}", status_code=HTTPStatus.OK)
+def delete_vote(post_id: int, current_user=Depends(get_current_user),
                 db: Session = Depends(get_db)):
-    vote_service.delete_vote(db=db, post_id=vote_dto.post_id, user_id=current_user.id)
+    vote_service.delete_vote(db=db, post_id=post_id, user_id=current_user.id)
     return {"message": "successfully removed vote!"}

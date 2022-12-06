@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from random import random
 
 import pytest
 from sqlalchemy import create_engine
@@ -49,3 +50,24 @@ def get_token(client, username, password):
                            data={"username": username, "password": password})
     assert response.status_code == HTTPStatus.OK
     return response.json()["access_token"]
+
+
+def random_input():
+    return random() * 10_000_000
+
+
+def get_post_payload():
+    return {
+        "title": f"Book Title {random_input()}",
+        "content": "Book Content",
+        "published": False
+    }
+
+
+@pytest.fixture(scope="session")
+def create_post(client):
+    def _create(payload, access_token):
+        response = client.post("/posts", headers={"Authorization": f"Bearer {access_token}"}, json=payload)
+        assert response.status_code == HTTPStatus.CREATED
+        return response.json()
+    return _create

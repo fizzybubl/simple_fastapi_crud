@@ -1,9 +1,8 @@
 from http import HTTPStatus
-from random import random
 
 import pytest
 
-from tests.conftest import get_token
+from tests.conftest import get_token, random_input
 
 
 @pytest.fixture(scope="session")
@@ -13,10 +12,6 @@ def create_user(client):
         assert response.status_code == HTTPStatus.CREATED
         return response.json()
     return _create
-
-
-def random_input():
-    return random() * 10_000_000
 
 
 def get_user_data():

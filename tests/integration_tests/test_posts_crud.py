@@ -1,15 +1,6 @@
 from http import HTTPStatus
 
-import pytest
-
-
-@pytest.fixture(scope="session")
-def create_post(client):
-    def _create(payload, access_token):
-        response = client.post("/posts", headers={"Authorization": f"Bearer {access_token}"}, json=payload)
-        assert response.status_code == HTTPStatus.CREATED
-        return response.json()
-    return _create
+from tests.conftest import get_post_payload
 
 
 def test_get_posts(client, access_token):
@@ -19,11 +10,7 @@ def test_get_posts(client, access_token):
 
 
 def test_get_post_by_id(client, access_token, create_post):
-    post_payload = {
-        "title": "Book Title",
-        "content": "Book Content",
-        "published": False
-    }
+    post_payload = get_post_payload()
     created_post = create_post(post_payload, access_token)
     response = client.get(f"/posts/{created_post['id']}", headers={"Authorization": f"Bearer {access_token}"})
     assert response.status_code == HTTPStatus.OK
@@ -32,21 +19,13 @@ def test_get_post_by_id(client, access_token, create_post):
 
 
 def test_create_post(create_post, access_token):
-    post_payload = {
-        "title": "Book Title",
-        "content": "Book Content",
-        "published": False
-    }
+    post_payload = get_post_payload()
     created_post = create_post(post_payload, access_token)
     assert_equals(post_payload, created_post)
 
 
 def test_update_post(client, access_token, create_post):
-    post_payload = {
-        "title": "Book Title",
-        "content": "Book Content",
-        "published": False
-    }
+    post_payload = get_post_payload()
     created_post = create_post(post_payload, access_token)
     update_payload = {
         "title": "Book Title Updated",
@@ -65,11 +44,7 @@ def test_update_post(client, access_token, create_post):
 
 
 def test_delete_post(client, access_token, create_post):
-    post_payload = {
-        "title": "Book Title",
-        "content": "Book Content",
-        "published": False
-    }
+    post_payload = get_post_payload()
     created_post = create_post(post_payload, access_token)
     response = client.delete(f"/posts/{created_post['id']}", headers={"Authorization": f"Bearer {access_token}"})
     assert response.status_code == HTTPStatus.NO_CONTENT
