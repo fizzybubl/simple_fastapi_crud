@@ -44,12 +44,15 @@ class PostResponse(Post, ResponseDto):
 
 class PostSchema(BaseModel):
     post: Post
-    votes: int
+    votes: Optional[int] = 0
 
 
 class PostResponseSchema(BaseModel):
     PostEntity: PostResponse
-    votes: int
+    votes: Optional[int] = 0
+
+    class Config:
+        orm_mode = True
 
 
 class Vote(BaseModel):

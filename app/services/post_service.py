@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session, Query
 
-from app.dto import PostSchema
+from app.dto import Post
 from app.models import PostEntity, VoteEntity
 
 
@@ -25,7 +25,7 @@ def get_post(db: Session, post_id: int):
     return post
 
 
-def create_post(db: Session, post_dto: PostSchema, owner_id: int):
+def create_post(db: Session, post_dto: Post, owner_id: int):
     new_post = PostEntity(owner_id=owner_id, **post_dto.dict())
     db.add(new_post)
     db.commit()
@@ -43,7 +43,7 @@ def _check_owner_id(post_query: Query, user_id):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Forbidden")
 
 
-def update_post(db: Session, post_id: int, post_dto: PostSchema, user_id: int):
+def update_post(db: Session, post_id: int, post_dto: Post, user_id: int):
     post_query = db.query(PostEntity).filter(PostEntity.id == post_id)
     _check_post_existence(post_query, post_id)
     _check_owner_id(post_query, user_id)

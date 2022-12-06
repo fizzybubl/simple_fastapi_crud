@@ -31,8 +31,8 @@ def get_post(id_: int, db: Session = Depends(get_db),
     return post_service.get_post(db=db, post_id=id_)
 
 
-@router.post("/", status_code=HTTPStatus.CREATED, response_model=dto.PostResponseSchema)
-def create_posts(post: dto.PostSchema,
+@router.post("/", status_code=HTTPStatus.CREATED, response_model=dto.PostResponse)
+def create_post(post: dto.Post,
                  db: Session = Depends(get_db),
                  current_user: UserEntity = Depends(get_current_user)):
     return post_service.create_post(db=db, post_dto=post, owner_id=current_user.id)
@@ -47,7 +47,7 @@ def delete_post(id_: int,
 
 @router.put("/{id_}", status_code=HTTPStatus.OK)
 def update_post(id_: int,
-                post: dto.PostSchema,
+                post: dto.Post,
                 db: Session = Depends(get_db),
                 current_user=Depends(get_current_user)):
     return post_service.update_post(db=db, post_id=id_, user_id=current_user.id, post_dto=post)
