@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
 from starlette.testclient import TestClient
 
 from app.config import settings
@@ -40,5 +40,12 @@ def client():
 def access_token(client):
     response = client.post("/authenticate",
                            data={"username": "daniil@gmail.com", "password": "12345"})
+    assert response.status_code == HTTPStatus.OK
+    return response.json()["access_token"]
+
+
+def get_token(client, username, password):
+    response = client.post("/authenticate",
+                           data={"username": username, "password": password})
     assert response.status_code == HTTPStatus.OK
     return response.json()["access_token"]

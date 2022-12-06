@@ -28,4 +28,4 @@ def delete_user(db: Session, user_id):
     user_query = db.query(UserEntity).filter(UserEntity.id == user_id)
     if not user_query.first():
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"User with id {user_id} not found!")
-    return user_query.remove()
+    return user_query.delete()

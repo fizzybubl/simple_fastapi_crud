@@ -33,8 +33,8 @@ def get_post(id_: int, db: Session = Depends(get_db),
 
 @router.post("/", status_code=HTTPStatus.CREATED, response_model=dto.PostResponse)
 def create_post(post: dto.Post,
-                 db: Session = Depends(get_db),
-                 current_user: UserEntity = Depends(get_current_user)):
+                db: Session = Depends(get_db),
+                current_user: UserEntity = Depends(get_current_user)):
     return post_service.create_post(db=db, post_dto=post, owner_id=current_user.id)
 
 
