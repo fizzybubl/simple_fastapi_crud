@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
+from app import models
 from tests.utils import get_token, random_input
 
 
@@ -33,9 +34,12 @@ def test_get_user(client, access_token, create_user):
     assert user.json()["email"] == user_data["email"]
 
 
-def test_delete_user(client, access_token, create_user):
-    user_data = get_user_data()
-    user_response = create_user(user_data, access_token)
-    token = get_token(client, user_data["email"], user_data["password"])
-    response = client.delete(f"/users/{user_response['id']}", headers={"Authorization": f"Bearer {token}"})
-    assert response.status_code == HTTPStatus.NO_CONTENT
+def test_delete_user(client, access_token, create_user, session):
+    # user_data = get_user_data()
+    # user_response = create_user(user_data, access_token)
+    # # token = get_token(client, user_data["email"], user_data["password"])
+    # response = client.delete(f"/users/{user_response['id']}", headers={"Authorization": f"Bearer {access_token}"})
+    # assert response.status_code == HTTPStatus.NO_CONTENT
+    #
+    # session.query(models.PostEntity).all()
+    ...

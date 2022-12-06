@@ -25,7 +25,7 @@ def get_testing_db():
         db.close()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def session():
     db = testing_session_factory()
     try:
