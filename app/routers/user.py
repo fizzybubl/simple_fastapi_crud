@@ -13,12 +13,12 @@ router = APIRouter(
 )
 
 
-@router.post("/", status_code=HTTPStatus.CREATED, response_model=dto.UserResponse)
-def create_user(user: dto.UserBody, db: Session = Depends(get_db)):
+@router.post("/", status_code=HTTPStatus.CREATED, response_model=schemas.UserResponse)
+def create_user(user: schemas.UserBody, db: Session = Depends(get_db)):
     return user_service.create_user(db=db, user_dto=user)
 
 
-@router.get("/{id_}", response_model=dto.UserResponse)
+@router.get("/{id_}", response_model=schemas.UserResponse)
 def get_user(id_: int, db: Session = Depends(get_db)):
     return user_service.get_user(db=db, user_id=id_)
 

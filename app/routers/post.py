@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("/", response_model=list[schemas.PostResponse])
 def get_posts(db: Session = Depends(get_db),
               current_user: UserEntity = Depends(get_current_user),
               limit: int = 5,
@@ -25,14 +25,14 @@ def get_posts(db: Session = Depends(get_db),
     return post_service.get_posts(db=db, limit=limit, offset=skip)
 
 
-@router.get("/{id_}", response_model=dto.PostResponseSchema)
+@router.get("/{id_}", response_model=schemas.PostResponseSchema)
 def get_post(id_: int, db: Session = Depends(get_db),
              current_user: UserEntity = Depends(get_current_user)):
     return post_service.get_post(db=db, post_id=id_)
 
 
-@router.post("/", status_code=HTTPStatus.CREATED, response_model=dto.PostResponse)
-def create_post(post: dto.PostBody,
+@router.post("/", status_code=HTTPStatus.CREATED, response_model=schemas.PostResponse)
+def create_post(post: schemas.PostBody,
                 db: Session = Depends(get_db),
                 current_user: UserEntity = Depends(get_current_user)):
     return post_service.create_post(db=db, post_dto=post, owner_id=current_user.id)
@@ -47,7 +47,7 @@ def delete_post(id_: int,
 
 @router.put("/{id_}", status_code=HTTPStatus.OK)
 def update_post(id_: int,
-                post: dto.PostBody,
+                post: schemas.PostBody,
                 db: Session = Depends(get_db),
                 current_user=Depends(get_current_user)):
     return post_service.update_post(db=db, post_id=id_, user_id=current_user.id, post_dto=post)

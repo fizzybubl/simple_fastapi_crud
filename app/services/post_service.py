@@ -9,18 +9,18 @@ from app.models import PostEntity, VoteEntity
 
 
 def get_posts(db: Session, limit: int = 5, offset: int = 0):
-    return db.query(PostEntity, func.count(VoteEntity.post_id).label("votes")) \
+    return db.query(PostEntity.id, PostEntity.title, PostEntity.owner_id, PostEntity.published, PostEntity.content,
+                    PostEntity.created_at, func.count(VoteEntity.post_id).label("votes")) \
                .join(VoteEntity, PostEntity.id == VoteEntity.post_id, isouter=True) \
                .group_by(PostEntity.id) \
                .limit(limit) \
                .offset(offset) \
                .all()
-    # return map(lambda x: PostResponse(id=x.id, owner_id=x.owner.id, title=x.title, content=x.content,
-    #                                   publised=x.published, created_at=x.created_at), posts)
 
 
 def get_post(db: Session, post_id: int):
-    post = db.query(PostEntity, func.count(VoteEntity.post_id).label("votes")) \
+    post = db.query(PostEntity.id, PostEntity.title, PostEntity.owner_id, PostEntity.published, PostEntity.content,
+                    PostEntity.created_at, func.count(VoteEntity.post_id).label("votes")) \
         .join(VoteEntity, PostEntity.id == VoteEntity.post_id, isouter=True) \
         .group_by(PostEntity.id) \
         .filter(PostEntity.id == post_id) \

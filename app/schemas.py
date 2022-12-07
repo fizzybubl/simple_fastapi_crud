@@ -39,6 +39,7 @@ class PostBody(BaseModel):
 
 class PostResponse(PostBody, ResponseSchema):
     owner_id: int
+    votes: Optional[int] = 0
 
 
 class PostSchema(BaseModel):

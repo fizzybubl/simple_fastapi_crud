@@ -11,7 +11,7 @@ from app.models import UserEntity
 router = APIRouter(tags=["Authentication"])
 
 
-@router.post("/authenticate", response_model=dto.Token)
+@router.post("/authenticate", response_model=schemas.Token)
 def authenticate(user_credentials: OAuth2PasswordRequestForm = Depends(),
                  db: Session = Depends(get_db)):
     user = db.query(UserEntity).filter(UserEntity.email == user_credentials.username).first()

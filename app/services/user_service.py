@@ -8,7 +8,7 @@ from app.models import UserEntity
 from app.utils import hash_password
 
 
-def create_user(db: Session, user_dto: dto.UserBody):
+def create_user(db: Session, user_dto: schemas.UserBody):
     user_dto.password = hash_password(user_dto.password)
     new_user = UserEntity(**user_dto.dict())
     db.add(new_user)

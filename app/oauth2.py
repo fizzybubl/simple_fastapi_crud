@@ -29,7 +29,7 @@ def verify_access_token(token: str, exc: Exception):
         id_ = payload.get("user_id")
         if not id_:
             raise exc
-        return dto.TokenData(id=id_)
+        return schemas.TokenData(id=id_)
     except JWTError:
         raise exc
 
