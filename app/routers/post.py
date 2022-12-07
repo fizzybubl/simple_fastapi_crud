@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session
 
-from app import dto
+from app import schemas
 from app.database import get_db
 from app.models import UserEntity
 from app.oauth2 import get_current_user
@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[dto.PostResponseSchema])
+@router.get("/")
 def get_posts(db: Session = Depends(get_db),
               current_user: UserEntity = Depends(get_current_user),
               limit: int = 5,
@@ -32,7 +32,7 @@ def get_post(id_: int, db: Session = Depends(get_db),
 
 
 @router.post("/", status_code=HTTPStatus.CREATED, response_model=dto.PostResponse)
-def create_post(post: dto.Post,
+def create_post(post: dto.PostBody,
                 db: Session = Depends(get_db),
                 current_user: UserEntity = Depends(get_current_user)):
     return post_service.create_post(db=db, post_dto=post, owner_id=current_user.id)
@@ -47,7 +47,7 @@ def delete_post(id_: int,
 
 @router.put("/{id_}", status_code=HTTPStatus.OK)
 def update_post(id_: int,
-                post: dto.Post,
+                post: dto.PostBody,
                 db: Session = Depends(get_db),
                 current_user=Depends(get_current_user)):
     return post_service.update_post(db=db, post_id=id_, user_id=current_user.id, post_dto=post)

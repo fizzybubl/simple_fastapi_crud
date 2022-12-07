@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app import dto
+from app import schemas
 from app.database import get_db
 from app.oauth2 import get_current_user
 from app.services import vote_service

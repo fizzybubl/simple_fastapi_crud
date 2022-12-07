@@ -1,13 +1,12 @@
 version: "3.7"
 services:
-#  nginx:
-#    image: nginx:1.23.2
-#    container_name: nginx
-#    environment:
-#      - NGINX_HOST=foobar.com
-#      - NGINX_PORT=80
-#    volumes:
-#      - ./default.conf:/etc/nginx/conf.d/default.conf
+  nginx:
+    image: nginx:1.23.2
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
   mysql:
     image: "mysql:8.0.31"
     container_name: mysql_container

@@ -4,28 +4,33 @@ from fastapi import HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session, Query
 
-from app.dto import Post
+from app.schemas import PostBody, PostResponse
 from app.models import PostEntity, VoteEntity
 
 
 def get_posts(db: Session, limit: int = 5, offset: int = 0):
     return db.query(PostEntity, func.count(VoteEntity.post_id).label("votes")) \
-        .join(VoteEntity, PostEntity.id == VoteEntity.post_id, isouter=True) \
-        .group_by(PostEntity.id).limit(limit).offset(offset).all()
+               .join(VoteEntity, PostEntity.id == VoteEntity.post_id, isouter=True) \
+               .group_by(PostEntity.id) \
+               .limit(limit) \
+               .offset(offset) \
+               .all()
+    # return map(lambda x: PostResponse(id=x.id, owner_id=x.owner.id, title=x.title, content=x.content,
+    #                                   publised=x.published, created_at=x.created_at), posts)
 
 
 def get_post(db: Session, post_id: int):
     post = db.query(PostEntity, func.count(VoteEntity.post_id).label("votes")) \
         .join(VoteEntity, PostEntity.id == VoteEntity.post_id, isouter=True) \
-        .group_by(PostEntity.id)\
-        .filter(PostEntity.id == post_id)\
+        .group_by(PostEntity.id) \
+        .filter(PostEntity.id == post_id) \
         .first()
     if not post:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=f"Post with id {post_id} was not found")
     return post
 
 
-def create_post(db: Session, post_dto: Post, owner_id: int):
+def create_post(db: Session, post_dto: PostBody, owner_id: int):
     new_post = PostEntity(owner_id=owner_id, **post_dto.dict())
     db.add(new_post)
     db.commit()
@@ -43,7 +48,7 @@ def _check_owner_id(post_query: Query, user_id):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Forbidden")
 
 
-def update_post(db: Session, post_id: int, post_dto: Post, user_id: int):
+def update_post(db: Session, post_id: int, post_dto: PostBody, user_id: int):
     post_query = db.query(PostEntity).filter(PostEntity.id == post_id)
     _check_post_existence(post_query, post_id)
     _check_owner_id(post_query, user_id)

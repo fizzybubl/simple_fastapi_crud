@@ -3,12 +3,12 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app import dto
+from app import schemas
 from app.models import UserEntity
 from app.utils import hash_password
 
 
-def create_user(db: Session, user_dto: dto.UserDto):
+def create_user(db: Session, user_dto: dto.UserBody):
     user_dto.password = hash_password(user_dto.password)
     new_user = UserEntity(**user_dto.dict())
     db.add(new_user)

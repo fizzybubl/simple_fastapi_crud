@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, conint
+from pydantic import BaseModel, EmailStr
 
 
-class ResponseDto(BaseModel):
+class ResponseSchema(BaseModel):
     id: int
     created_at: datetime
 
@@ -12,12 +12,12 @@ class ResponseDto(BaseModel):
         orm_mode = True
 
 
-class UserDto(BaseModel):
+class UserBody(BaseModel):
     email: EmailStr
     password: str
 
 
-class UserResponseDto(ResponseDto):
+class UserResponse(ResponseSchema):
     email: EmailStr
 
 
@@ -31,19 +31,18 @@ class TokenData(BaseModel):
     id: Optional[int] = None
 
 
-class Post(BaseModel):
+class PostBody(BaseModel):
     title: str
     content: str
     published: bool
 
 
-class PostResponse(Post, ResponseDto):
+class PostResponse(PostBody, ResponseSchema):
     owner_id: int
-    owner: UserResponseDto
 
 
 class PostSchema(BaseModel):
-    post: Post
+    post: PostBody
     votes: Optional[int] = 0
 
 
